@@ -3,22 +3,24 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IProduct extends Document {
   name: string;
   price: number;
-  description: string;
+  quantity: number;
 }
 const productSchema: Schema =  new Schema<IProduct>({
     name : {
         type: String,
         required: true,
-        unique: true,},
-        
+        unique: true,
+    },    
     price : {
         type: Number,
         required: true,
         min:0
     },
-    description : {
-        type: String
-    }
+    quantity : {
+        type: Number,
+        required: true,
+        min:0
+    },
 }, {
     timestamps: true,
     strict: 'throw',

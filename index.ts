@@ -1,12 +1,14 @@
 import express from 'express';
 import 'dotenv/config';
 import productRouter from './routes/product';
+import userRouter from './routes/user';
 import { connectDB } from './config/DbConection';
 
 const app  = express();
 
 app.use(express.json());
 app.use('/api/v1/products', productRouter);
+app.use('/api/v1/users', userRouter);
 
 try {
     // Connect to MongoDB
