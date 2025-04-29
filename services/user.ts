@@ -62,10 +62,20 @@ const update = async (id: string, data: Partial<IUser>): Promise<IUser> => {
     }
 }
 
+const getByUsername = async (username: string): Promise<IUser | null > => {
+    try {
+        const user = await User.findOne({username});
+        return user;
+    } catch (error) {
+        throw new Error('Error fetching user');
+    }
+}
+
 export default {
     getAll,
     getById,
     create,
     deleteUser,
-    update
+    update,
+    getByUsername
 }

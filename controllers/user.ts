@@ -1,5 +1,9 @@
 import {Request, Response} from 'express';
 import UserService  from '../services/user'; 
+import bcrypt from 'bcrypt';
+import { generateToken } from '../helpers/auth';
+
+
 
 const getAllUser = async (req: Request, res: Response) => {
     try{
@@ -25,10 +29,19 @@ const getUserById = async (req : Request, res: Response) => {
 
 const createUser = async (req: Request, res: Response) => {
     try {
-        const user = await UserService.create(req.body);
+        const { username, password} = req.body;
+        const existingUser = await UserService.getByUsername(username);
+        if (existingUser !== null) {
+            res.status(400).json({ message: 'User already exists' });
+            console.log('User already exists:', existingUser);
+        }
+        console.log('Creating user:', req.body);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await UserService.create({...req.body, password: hashedPassword});
         res.status(201).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error creating User' });
+        console.error('Error creating user:', error);
     }
 }
 
@@ -58,10 +71,32 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 }
 
+const login = async ( req: Request, res: Response) => {
+    try{
+        const {username, password } = req.body;
+        const user = await UserService.getByUsername(username);
+        if (user === null) {
+            res.status(401).json({ message: 'Invalid username' });
+        }
+        else{
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            res.status(401).json({ message: 'Invalid password' });
+
+        }
+        const token = await generateToken(user.username, user.role);
+        console.log('Token generated:', token);
+        res.status(200).json({ message: 'Login successful', token });}
+    }catch (error) {
+        res.status(500).json({ message: 'Error logging in' });
+    }
+}
+
 export default {
     getAllUser,
     getUserById,
     createUser,
     updateUser,
     deleteUser,
+    login
 }
