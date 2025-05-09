@@ -37,10 +37,9 @@ const userSchema: Schema = new Schema<IUser>({
     },
     role:{
         type: String,
-        enum: ['admin', 'user' , 'student', 'teacher', 'trainer'],
-        default: 'user',
+        enum: ['STUDENT', 'TRAINER' , 'ADMIN'],
         required: true,
     },
-},{timestamps: true, strict: 'throw',});
+},{timestamps: true,});
 
 export default mongoose.model<IUser>('User', userSchema);
