@@ -1,14 +1,26 @@
 import mongoose , {Document, Schema} from 'mongoose';
 
 export interface IUser extends Document {
+
+    name:string;
+    idCard:string;
     username: string;
     password: string;
     email: string;
     role: string;
-    credits: number;
+
 }
 
 const userSchema: Schema = new Schema<IUser>({
+    name: {
+        type: String,
+        required: true,
+    },
+    idCard: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     username: {
         type: String,
         required: true,
@@ -25,15 +37,10 @@ const userSchema: Schema = new Schema<IUser>({
     },
     role:{
         type: String,
-        enum: ['admin', 'user'],
+        enum: ['admin', 'user' , 'student', 'teacher', 'trainer'],
         default: 'user',
         required: true,
     },
-    credits:{
-        type: Number,
-        default: 0,
-        min: 0,
-    }
-})
+},{timestamps: true, strict: 'throw',});
 
 export default mongoose.model<IUser>('User', userSchema);
